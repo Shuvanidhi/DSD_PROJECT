@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommerce Distributed System</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .output-section {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ecommerce Distributed System Demo</h1>
+    <div>
+        <button onclick="fetchCustomers()">Fetch Customers</button>
+        <button onclick="fetchProducts()">Fetch Products</button>
+        <button onclick="fetchTransactions()">Fetch Transactions</button>
+    </div>
+
+    <!-- Customers Table -->
+    <div id="customers-section" class="output-section hidden">
+        <h2>Customer List</h2>
+        <table id="customers-table">
+            <thead>
+                <tr>
+                    <th>Customer ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Gender</th>
+                    <th>Country</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Products Table -->
+    <div id="products-section" class="output-section hidden">
+        <h2>Product List</h2>
+        <table id="products-table">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Category</th>
+                    <th>Subcategory</th>
+                    <th>Base Color</th>
+                    <th>Season</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Transactions Table -->
+    <div id="transactions-section" class="output-section hidden">
+        <h2>Transaction List</h2>
+        <table id="transactions-table">
+            <thead>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Customer ID</th>
+                    <th>Total Amount</th>
+                    <th>Payment Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function clearSections() {
+            document.getElementById('customers-section').classList.add('hidden');
+            document.getElementById('products-section').classList.add('hidden');
+            document.getElementById('transactions-section').classList.add('hidden');
+        }
+
+        function fetchCustomers() {
+            clearSections(); // Hide other sections
+            axios.get("/customers") // Call the backend
+                .then(response => {
+                    const customers = response.data;
+                    const tableBody = document.getElementById("customers-table").querySelector("tbody");
+                    tableBody.innerHTML = ""; // Clear existing rows
+
+                    customers.forEach(customer => {
+                        const row = `<tr>
+                            <td>${customer.customer_id}</td>
+                            <td>${customer.first_name}</td>
+                            <td>${customer.last_name}</td>
+                            <td>${customer.email}</td>
+                            <td>${customer.gender}</td>
+                            <td>${customer.home_country}</td>
+                        </tr>`;
+                        tableBody.innerHTML += row; // Append new rows
+                    });
+
+                    document.getElementById('customers-section').classList.remove('hidden'); // Show customers table
+                })
+                .catch(error => {
+                    console.error("Error fetching customers:", error);
+                });
+        }
+
+        function fetchProducts() {
+            clearSections(); // Hide other sections
+            axios.get("/products") // Call the backend
+                .then(response => {
+                    const products = response.data;
+                    const tableBody = document.getElementById("products-table").querySelector("tbody");
+                    tableBody.innerHTML = ""; // Clear existing rows
+
+                    products.forEach(product => {
+                        const row = `<tr>
+                            <td>${product.id}</td>
+                            <td>${product.masterCategory}</td>
+                            <td>${product.subCategory}</td>
+                            <td>${product.baseColour}</td>
+                            <td>${product.season}</td>
+                        </tr>`;
+                        tableBody.innerHTML += row; // Append new rows
+                    });
+
+                    document.getElementById('products-section').classList.remove('hidden'); // Show products table
+                })
+                .catch(error => {
+                    console.error("Error fetching products:", error);
+                });
+        }
+
+        function fetchTransactions() {
+            clearSections(); // Hide other sections
+            axios.get("/transactions") // Call the backend
+                .then(response => {
+                    const transactions = response.data;
+                    const tableBody = document.getElementById("transactions-table").querySelector("tbody");
+                    tableBody.innerHTML = ""; // Clear existing rows
+
+                    transactions.forEach(transaction => {
+                        const row = `<tr>
+                            <td>${transaction.booking_id}</td>
+                            <td>${transaction.customer_id}</td>
+                            <td>${transaction.total_amount}</td>
+                            <td>${transaction.payment_status}</td>
+                            <td>${transaction.created_at}</td>
+                        </tr>`;
+                        tableBody.innerHTML += row; // Append new rows
+                    });
+
+                    document.getElementById('transactions-section').classList.remove('hidden'); // Show transactions table
+                })
+                .catch(error => {
+                    console.error("Error fetching transactions:", error);
+                });
+        }
+    </script>
+</body>
+</html>
